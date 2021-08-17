@@ -1,11 +1,11 @@
 import axios from 'axios';
 import queryString from 'query-string';
+import Config from "@config";
 const axiosClient = axios.create({
-  baseURL: process.env.BASE_URL,
+  baseURL: Config.BASE_URL,
   paramsSerializer: (params) => queryString.stringify(params),
   timeout: 15000,
 });
-
 axiosClient.interceptors.response.use(
   (response) => {
     if (response && response.data) {
