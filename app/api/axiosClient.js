@@ -1,0 +1,21 @@
+import axios from 'axios';
+import queryString from 'query-string';
+const axiosClient = axios.create({
+  baseURL: process.env.BASE_URL,
+  paramsSerializer: (params) => queryString.stringify(params),
+  timeout: 15000,
+});
+
+axiosClient.interceptors.response.use(
+  (response) => {
+    if (response && response.data) {
+      return response.data;
+    }
+    return response;
+  },
+  (error) => {
+    throw error;
+  }
+);
+
+export default axiosClient;
