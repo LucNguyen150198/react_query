@@ -29,7 +29,7 @@ const people = {
     return useInfiniteQuery(
       'people',
       ({ pageParam = 1 }) =>
-        axiosClient.get('people', { params: { page: pageParam } }),
+        axiosClient.get('people', { params: { pageParam} }),
       {
         getNextPageParam: (lastPage) => {
           if (lastPage?.next) {

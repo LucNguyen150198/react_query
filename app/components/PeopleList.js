@@ -8,16 +8,19 @@ import {
   Image,
   StatusBar,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import { people } from '@api';
 import axiosClient from '@api/axiosClient';
-
+import { useQueryClient } from 'react-query';
 import Images from '@assets';
 import faker from 'faker';
 const AVATAR_SIZE = 50;
 const SPACING = 20;
 export const PeopleList = () => {
   const [page, setPage] = React.useState(1);
+  const [searchKey, setSearchKey] = React.useState('');
+  const queryClient = useQueryClient();
   let onEndReachedCalledDuringMomentum = true;
   const {
     data: peoples,
@@ -29,15 +32,31 @@ export const PeopleList = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = people.useGetInfinitePeoples();
-  // const fetchPeoples = (page = 0) =>
-  //   axiosClient.get('people', { params: { page } });
+  } = people.useGetInfinitePeoples({
+    search: searchKey,
+  });
 
+  const filterPeople = async (params) => {
+    try {
+      let res = await axiosClient.get('people', { params });
+      peoples.pages = [res];
+      queryClient.setQueryData('people', peoples);
+    } catch (error) {}
+  };
+  const onChangeValue = (val) => {
+    setSearchKey(val);
+  };
   const onLoadMore = () => {
-    if (hasNextPage &&!onEndReachedCalledDuringMomentum) {
+    if (hasNextPage && !onEndReachedCalledDuringMomentum) {
       onEndReachedCalledDuringMomentum = true;
       fetchNextPage();
     }
+  };
+
+  const onSubmitSearch = () => {
+    filterPeople({
+      search: searchKey,
+    });
   };
 
   // const onChangePage = (page) => () => {
@@ -120,6 +139,12 @@ export const PeopleList = () => {
         source={Images.background}
         blurRadius={10}
       />
+      <InputSearch
+        value={searchKey}
+        onChangeText={onChangeValue}
+        placeholder="Search..."
+        onSubmitEditing={onSubmitSearch}
+      />
       <FlatList
         contentContainerStyle={{
           padding: SPACING,
@@ -140,6 +165,14 @@ export const PeopleList = () => {
           onEndReachedCalledDuringMomentum = false;
         }}
       />
+    </View>
+  );
+};
+
+const InputSearch = (props) => {
+  return (
+    <View style={styles.searchStyle}>
+      <TextInput style={styles.inputStyle} {...props} />
     </View>
   );
 };
@@ -205,5 +238,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: SPACING,
+  },
+  searchStyle: {
+    // flex: 1,
+    height: AVATAR_SIZE,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#0a0101',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: SPACING * 2,
+    marginHorizontal: SPACING,
+    backgroundColor: '#e3e1e1',
+  },
+  inputStyle: {
+    flex: 1,
+    width: '100%',
+    fontSize: 14,
+    paddingHorizontal: 10,
   },
 });
