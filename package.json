@@ -10,13 +10,23 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-community/masked-view": "^0.1.11",
+    "@react-navigation/native": "^5.0.9",
+    "@react-navigation/native-stack": "^6.1.0",
+    "@react-navigation/stack": "^5.1.1",
     "axios": "^0.21.1",
     "faker": "^5.5.3",
     "query-string": "^7.0.1",
     "react": "17.0.1",
     "react-native": "0.64.2",
+    "react-native-gesture-handler": "^1.10.3",
     "react-native-modal": "^12.1.0",
+    "react-native-reanimated": "^2.2.0",
+    "react-native-safe-area-context": "^3.3.0",
+    "react-native-screens": "^3.5.0",
+    "react-native-shared-element": "^0.8.0-alpha.3",
     "react-native-vector-icons": "^8.1.0",
+    "react-navigation-shared-element": "^5.0.0-alpha1",
     "react-query": "^3.19.6"
   },
   "devDependencies": {

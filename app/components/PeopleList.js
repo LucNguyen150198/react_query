@@ -16,7 +16,7 @@ import Images from '@assets';
 import faker from 'faker';
 const AVATAR_SIZE = 50;
 const SPACING = 20;
-export const PeopleList = () => {
+export const PeopleList = ({ navigation }) => {
   const [page, setPage] = React.useState(1);
   const [paramSearch, setParamSearch] = React.useState(null);
   let onEndReachedCalledDuringMomentum = true;
@@ -56,14 +56,25 @@ export const PeopleList = () => {
   //   fetchPeoples(page);
   // };
 
+  const onGoToDetail = (item) => () => {
+    navigation.navigate('PeopleDetail', { item });
+  };
   const renderItem = ({ item, index }) => {
     return item?.results?.map((people, index) => {
-      const { name, birth_year, gender } = people;
+      const { name, birth_year, gender, url } = people;
+      const id = url?.split('/').slice(-2)[0];
       const avatar_url = `https://randomuser.me/api/portraits/${faker.helpers.randomize(
         ['women', 'men']
       )}/${faker.random.number(60)}.jpg`;
       return (
-        <View key={index + ''} style={styles.containerItem}>
+        <TouchableOpacity
+          key={index + ''}
+          style={styles.containerItem}
+          onPress={onGoToDetail({
+            id,
+            avatar_url,
+          })}
+        >
           <Image
             style={styles.avatarStyle}
             source={{
@@ -81,7 +92,7 @@ export const PeopleList = () => {
               {gender}
             </Text>
           </View>
-        </View>
+        </TouchableOpacity>
       );
     });
   };
@@ -150,8 +161,7 @@ export const PeopleList = () => {
     return isFetchingNextPage && <ActivityIndicator animating size="small" />;
   };
 
-  if (isLoading)
-    return <ActivityIndicator animating color="#a87332" />;
+  if (isLoading) return <ActivityIndicator animating color="#a87332" />;
   if (isError) return <Text style={styles.txtLoading}>{error.message}</Text>;
   return (
     <View style={{ flex: 1 }}>

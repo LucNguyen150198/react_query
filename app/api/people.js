@@ -10,7 +10,9 @@ const people = {
   },
 
   useGetPeople: (id) => {
-    return useQuery(['people', id], () => axiosClient.get(`people/${id}`));
+    return useQuery(['people', id], () => axiosClient.get(`people/${id}`), {
+      enabled: !!id,
+    });
   },
   useGetParallelPeople: (ids) => {
     const queries = ids.map((id) => {
