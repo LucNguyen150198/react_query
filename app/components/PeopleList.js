@@ -10,17 +10,15 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
+import { HeaderSearchBar } from '@components';
 import { people } from '@api';
-import axiosClient from '@api/axiosClient';
-import { useQueryClient } from 'react-query';
 import Images from '@assets';
 import faker from 'faker';
 const AVATAR_SIZE = 50;
 const SPACING = 20;
 export const PeopleList = () => {
   const [page, setPage] = React.useState(1);
-  const [searchKey, setSearchKey] = React.useState('');
-  const queryClient = useQueryClient();
+  const [paramSearch, setParamSearch] = React.useState(null);
   let onEndReachedCalledDuringMomentum = true;
   const {
     data: peoples,
@@ -32,20 +30,16 @@ export const PeopleList = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = people.useGetInfinitePeoples({
-    search: searchKey,
-  });
+  } = people.useGetInfinitePeoples();
 
-  const filterPeople = async (params) => {
-    try {
-      let res = await axiosClient.get('people', { params });
-      peoples.pages = [res];
-      queryClient.setQueryData('people', peoples);
-    } catch (error) {}
-  };
-  const onChangeValue = (val) => {
-    setSearchKey(val);
-  };
+  const {
+    data: search_peoples,
+    isLoading: isSearchLoading,
+    isError: isSearchError,
+    isFetching: isSearchFetching,
+    isSuccess: isSearchSuccess,
+  } = people.useGetAllPeople(paramSearch);
+
   const onLoadMore = () => {
     if (hasNextPage && !onEndReachedCalledDuringMomentum) {
       onEndReachedCalledDuringMomentum = true;
@@ -53,10 +47,8 @@ export const PeopleList = () => {
     }
   };
 
-  const onSubmitSearch = () => {
-    filterPeople({
-      search: searchKey,
-    });
+  const onSubmitSearch = (params) => {
+    setParamSearch(params);
   };
 
   // const onChangePage = (page) => () => {
@@ -92,6 +84,34 @@ export const PeopleList = () => {
         </View>
       );
     });
+  };
+
+  const renderSearchItem = ({ item, index }) => {
+    const { name, birth_year, gender } = item;
+    const avatar_url = `https://randomuser.me/api/portraits/${faker.helpers.randomize(
+      ['women', 'men']
+    )}/${faker.random.number(60)}.jpg`;
+    return (
+      <View key={index + ''} style={styles.containerItem}>
+        <Image
+          style={styles.avatarStyle}
+          source={{
+            uri: avatar_url,
+          }}
+        />
+        <View>
+          <Text style={styles.txtName}>{name}</Text>
+          <Text style={styles.txtBirthday}>
+            <Text style={{ fontWeight: 'bold' }}>BirthDay: </Text>
+            {birth_year}
+          </Text>
+          <Text style={styles.txtGender}>
+            <Text style={{ fontWeight: 'bold' }}>Gender: </Text>
+            {gender}
+          </Text>
+        </View>
+      </View>
+    );
   };
 
   const Button = ({ onPress, label, disabled = false }) => {
@@ -130,7 +150,8 @@ export const PeopleList = () => {
     return isFetchingNextPage && <ActivityIndicator animating size="small" />;
   };
 
-  if (isLoading) return <ActivityIndicator animating color="#a87332" />;
+  if (isLoading)
+    return <ActivityIndicator animating color="#a87332" />;
   if (isError) return <Text style={styles.txtLoading}>{error.message}</Text>;
   return (
     <View style={{ flex: 1 }}>
@@ -139,16 +160,17 @@ export const PeopleList = () => {
         source={Images.background}
         blurRadius={10}
       />
-      <InputSearch
-        value={searchKey}
-        onChangeText={onChangeValue}
-        placeholder="Search..."
-        onSubmitEditing={onSubmitSearch}
+      <HeaderSearchBar
+        title="People"
+        renderItem={renderSearchItem}
+        onSubmit={onSubmitSearch}
+        data={search_peoples?.results ?? []}
+        loading={isSearchFetching || isSearchLoading}
+        success={isSearchSuccess}
       />
       <FlatList
         contentContainerStyle={{
           padding: SPACING,
-          paddingTop: StatusBar.currentHeight || 42,
         }}
         refreshing={isFetching}
         onRefresh={refetch}
@@ -165,14 +187,6 @@ export const PeopleList = () => {
           onEndReachedCalledDuringMomentum = false;
         }}
       />
-    </View>
-  );
-};
-
-const InputSearch = (props) => {
-  return (
-    <View style={styles.searchStyle}>
-      <TextInput style={styles.inputStyle} {...props} />
     </View>
   );
 };

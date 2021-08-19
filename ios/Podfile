@@ -12,6 +12,8 @@ target 'React_Query' do
     :hermes_enabled => false
   )
 
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
   target 'React_QueryTests' do
     inherit! :complete
     # Pods for testing

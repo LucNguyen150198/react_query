@@ -3,12 +3,9 @@ import { useQuery, useQueries, useInfiniteQuery } from 'react-query';
 const people = {
   useGetAllPeople: (params) => {
     return useQuery(
-      ['people', params.page],
+      ['people', params?.search],
       () => axiosClient.get('people', { params }),
-      {
-        retry: 3,
-        keepPreviousData: true,
-      }
+      { enabled: !!params?.search }
     );
   },
 
@@ -29,7 +26,7 @@ const people = {
     return useInfiniteQuery(
       'people',
       ({ pageParam = 1 }) =>
-        axiosClient.get('people', { params: { pageParam} }),
+        axiosClient.get('people', { params: { page: pageParam } }),
       {
         getNextPageParam: (lastPage) => {
           if (lastPage?.next) {
