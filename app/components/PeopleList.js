@@ -60,14 +60,11 @@ export const PeopleList = ({ navigation }) => {
 
   const onGoToDetail = (item) => () => {
     navigation.navigate('PeopleDetail', { item });
-  };
-  const onGoToDetailSearch = (item) => () => {
-    modalRef.current?.forceQuit();
     setTimeout(() => {
-      navigation.navigate('PeopleDetail', { item });
-    }, 350);
+      modalRef.current?.forceQuit();
+    }, 200);
   };
-  const renderItem = ({ item, index }) => {
+ renderItem = ({ item, index }) => {
     return item?.results?.map((people, index) => {
       const { name, birth_year, gender, url } = people;
       const id = url?.split('/').slice(-2)[0];
@@ -116,7 +113,7 @@ export const PeopleList = ({ navigation }) => {
       <TouchableOpacity
         key={index + ''}
         style={styles.containerItem}
-        onPress={onGoToDetailSearch({
+        onPress={onGoToDetail({
           id,
           avatar_url,
         })}
