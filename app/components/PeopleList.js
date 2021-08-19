@@ -20,6 +20,8 @@ export const PeopleList = ({ navigation }) => {
   const [page, setPage] = React.useState(1);
   const [paramSearch, setParamSearch] = React.useState(null);
   let onEndReachedCalledDuringMomentum = true;
+
+  const modalRef = React.useRef(null);
   const {
     data: peoples,
     isLoading,
@@ -58,6 +60,12 @@ export const PeopleList = ({ navigation }) => {
 
   const onGoToDetail = (item) => () => {
     navigation.navigate('PeopleDetail', { item });
+  };
+  const onGoToDetailSearch = (item) => () => {
+    modalRef.current?.forceQuit();
+    setTimeout(() => {
+      navigation.navigate('PeopleDetail', { item });
+    }, 350);
   };
   const renderItem = ({ item, index }) => {
     return item?.results?.map((people, index) => {
@@ -98,12 +106,21 @@ export const PeopleList = ({ navigation }) => {
   };
 
   const renderSearchItem = ({ item, index }) => {
-    const { name, birth_year, gender } = item;
+    const { name, birth_year, gender, url } = item;
+    const id = url?.split('/').slice(-2)[0];
     const avatar_url = `https://randomuser.me/api/portraits/${faker.helpers.randomize(
       ['women', 'men']
     )}/${faker.random.number(60)}.jpg`;
+
     return (
-      <View key={index + ''} style={styles.containerItem}>
+      <TouchableOpacity
+        key={index + ''}
+        style={styles.containerItem}
+        onPress={onGoToDetailSearch({
+          id,
+          avatar_url,
+        })}
+      >
         <Image
           style={styles.avatarStyle}
           source={{
@@ -121,7 +138,7 @@ export const PeopleList = ({ navigation }) => {
             {gender}
           </Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -171,6 +188,7 @@ export const PeopleList = ({ navigation }) => {
         blurRadius={10}
       />
       <HeaderSearchBar
+        ref={modalRef}
         title="People"
         renderItem={renderSearchItem}
         onSubmit={onSubmitSearch}

@@ -13,14 +13,15 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { CustomModal } from './CustomModal';
 const ICON_SIZE = 30;
 const SPACING = 20;
-export const HeaderSearchBar = ({
+export const HeaderSearchBar = React.forwardRef(({
   title='React Query',
   data = [],
   renderItem,
   onSubmit,
   loading,
   success,
-}) => {
+  onModalHide
+},ref) => {
   const [visible, setSearchBar] = React.useState(false);
   const [searchKey, setSearchKey] = React.useState(null);
   const [list, setList] = React.useState([]);
@@ -28,6 +29,10 @@ export const HeaderSearchBar = ({
   React.useEffect(() => {
     setList(data);
   }, [data]);
+
+  React.useImperativeHandle(ref, () => ({
+    forceQuit: closeModalSearch,
+  }));
 
   const openModalSearch = () => {
     setSearchBar(true);
@@ -98,13 +103,13 @@ export const HeaderSearchBar = ({
       </View>
 
       {
-        <CustomModal visible={visible}>
+        <CustomModal visible={visible} onModalHide={onModalHide}>
           <SearchBar />
         </CustomModal>
       }
     </React.Fragment>
   );
-};
+})
 const styles = StyleSheet.create({
   container: {
     padding: 20,
