@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, ActivityIndicator, Image } from 'react-native';
 import { people } from '@api';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { CustomImage } from '@components';
 export const PeopleDetail = ({ route, navigation }) => {
   const { item } = route.params;
   const { data, isLoading, isError, isFetching, isSuccess, error } =
@@ -13,8 +14,8 @@ export const PeopleDetail = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Image
-        style={{ ...StyleSheet.absoluteFillObject, flex: 1 }}
+      <CustomImage
+        style={StyleSheet.absoluteFillObject}
         source={{ uri: 'https://random.responsiveimages.io/v1/docs' }}
         resizeMode="cover"
       />
@@ -30,7 +31,7 @@ export const PeopleDetail = ({ route, navigation }) => {
             alignItems: 'center',
           }}
         >
-          <Image
+          <CustomImage
             style={styles.avatarStyle}
             source={{
               uri: item?.avatar_url,

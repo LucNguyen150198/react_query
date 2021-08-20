@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import { HeaderSearchBar } from '@components';
+import { HeaderSearchBar, CustomImage } from '@components';
 import { people } from '@api';
 import Images from '@assets';
 import faker from 'faker';
@@ -64,7 +64,7 @@ export const PeopleList = ({ navigation }) => {
       modalRef.current?.forceQuit();
     }, 200);
   };
- renderItem = ({ item, index }) => {
+  renderItem = ({ item, index }) => {
     return item?.results?.map((people, index) => {
       const { name, birth_year, gender, url } = people;
       const id = url?.split('/').slice(-2)[0];
@@ -80,7 +80,7 @@ export const PeopleList = ({ navigation }) => {
             avatar_url,
           })}
         >
-          <Image
+          <CustomImage
             style={styles.avatarStyle}
             source={{
               uri: avatar_url,
