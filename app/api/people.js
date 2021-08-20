@@ -1,5 +1,10 @@
 import axiosClient from './axiosClient';
-import { useQuery, useQueries, useInfiniteQuery } from 'react-query';
+import {
+  useQuery,
+  useQueries,
+  useInfiniteQuery,
+  useQueryClient
+} from 'react-query';
 const people = {
   useGetAllPeople: (params) => {
     return useQuery(

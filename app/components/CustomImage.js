@@ -14,7 +14,7 @@ export const CustomImage = ({
   resizeMode = 'contain',
   style,
 }) => {
-  const [download, setDownload] = React.useState(-1);
+  const [download, setDownload] = React.useState(1);
 
   const onLoadStart = () => {
     setDownload(0);

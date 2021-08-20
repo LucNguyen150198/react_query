@@ -14,6 +14,7 @@ import { HeaderSearchBar, CustomImage } from '@components';
 import { people } from '@api';
 import Images from '@assets';
 import faker from 'faker';
+import { SharedElement } from 'react-native-shared-element';
 const AVATAR_SIZE = 50;
 const SPACING = 20;
 export const PeopleList = ({ navigation }) => {
@@ -80,12 +81,15 @@ export const PeopleList = ({ navigation }) => {
             avatar_url,
           })}
         >
-          <CustomImage
-            style={styles.avatarStyle}
-            source={{
-              uri: avatar_url,
-            }}
-          />
+          <SharedElement id={`item.${id}.image`}>
+            <CustomImage
+              style={styles.avatarStyle}
+              source={{
+                uri: avatar_url,
+              }}
+            />
+          </SharedElement>
+
           <View>
             <Text style={styles.txtName}>{name}</Text>
             <Text style={styles.txtBirthday}>

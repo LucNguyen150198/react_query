@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, ActivityIndicator, Image } from 'react-native';
 import { people } from '@api';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { CustomImage } from '@components';
+ import { SharedElement } from 'react-native-shared-element';
 export const PeopleDetail = ({ route, navigation }) => {
   const { item } = route.params;
   const { data, isLoading, isError, isFetching, isSuccess, error } =
@@ -14,11 +15,16 @@ export const PeopleDetail = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <CustomImage
+      <SharedElement
+        id={`item.${item.id}.image`}
         style={StyleSheet.absoluteFillObject}
-        source={{ uri: 'https://random.responsiveimages.io/v1/docs' }}
-        resizeMode="cover"
-      />
+      >
+        <CustomImage
+          style={StyleSheet.absoluteFillObject}
+          source={{ uri: 'https://random.responsiveimages.io/v1/docs' }}
+          resizeMode="cover"
+        />
+      </SharedElement>
 
       <View style={styles.backIconStyle}>
         <Icon name="arrow-left" size={20} onPress={() => navigation.goBack()} />
@@ -82,6 +88,15 @@ export const PeopleDetail = ({ route, navigation }) => {
       </View>
     </View>
   );
+};
+
+PeopleDetail.sharedElements = (route) => {
+  const { item } = route.params;
+  return [
+    {
+      id: `item.${item.id}.image`,
+    },
+  ];
 };
 
 const styles = StyleSheet.create({
