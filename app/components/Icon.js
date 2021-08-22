@@ -3,7 +3,13 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 const ICON_SIZE = 20;
-export const Add = ({ size, backgroundColor='#FFF',tintColor='#FFF' ,style, onPress = () => {} }) => {
+export const Add = ({
+  size,
+  backgroundColor = '#FFF',
+  tintColor = '#FFF',
+  style,
+  onPress = () => {},
+}) => {
   const fullSize = size ?? ICON_SIZE;
   return (
     <TouchableOpacity
@@ -14,7 +20,7 @@ export const Add = ({ size, backgroundColor='#FFF',tintColor='#FFF' ,style, onPr
           width: fullSize * 2,
           height: fullSize * 2,
           borderRadius: fullSize * 2,
-          backgroundColor:backgroundColor,
+          backgroundColor: backgroundColor,
         },
         style,
       ]}
@@ -41,6 +47,30 @@ export const Edit = ({ size, backgroundColor, style, onPress = () => {} }) => {
       ]}
     >
       <Icon name="add" size={fullSize} />
+    </TouchableOpacity>
+  );
+};
+
+export const Back = ({ size, backgroundColor, style, onPress = () => {} }) => {
+  const fullSize = size ?? ICON_SIZE;
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[
+        styles.iconStyle,
+        {
+          width: fullSize * 2,
+          height: fullSize * 2,
+          borderRadius: fullSize * 2,
+          backgroundColor,
+          position: 'absolute',
+          top: 40,
+          left: 20,
+        },
+        style,
+      ]}
+    >
+      <Icon name="arrow-left" size={fullSize} onPress={onPress} />
     </TouchableOpacity>
   );
 };

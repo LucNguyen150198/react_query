@@ -10,7 +10,7 @@ import {
   Dimensions,
   Switch,
 } from 'react-native';
-import { CustomInput, CustomPicker } from '@components';
+import { CustomInput, CustomPicker, Back } from '@components';
 import { user } from '@api';
 import Images from '@assets';
 import { useFormik } from 'formik';
@@ -97,6 +97,9 @@ export const UserForm = ({ route, navigation }) => {
         source={Images.background}
         blurRadius={10}
       />
+
+      <Back backgroundColor='#fff' onPress={() => navigation.goBack()} />
+
       <Text style={styles.txtTitle}>CREATE USER</Text>
       <CustomInput
         placeholder="Name"
@@ -139,13 +142,6 @@ export const UserForm = ({ route, navigation }) => {
         label={'Submit'}
         onPress={handleSubmit}
         disabled={isLoading || isFetching}
-      />
-
-      <Button
-        label={'Go back'}
-        color="black"
-        onPress={() => navigation.goBack()}
-        transparent
       />
     </SafeAreaView>
   );
