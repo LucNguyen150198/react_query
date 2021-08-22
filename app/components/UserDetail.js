@@ -49,9 +49,7 @@ export const UserDetail = ({ route, navigation }) => {
               uri: data?.avatar,
             }}
           />
-          <Text style={styles.txtName}>
-            {data?.first_name} {data?.last_name}
-          </Text>
+          <Text style={styles.txtName}>{data?.name}</Text>
         </View>
 
         <View style={{ padding: 10 }}>
@@ -62,6 +60,10 @@ export const UserDetail = ({ route, navigation }) => {
           <Text style={styles.txtBirthday}>
             <Text style={{ fontWeight: 'bold' }}>Phone Number: </Text>
             {item?.phone}
+          </Text>
+          <Text style={styles.txtBirthday}>
+            <Text style={{ fontWeight: 'bold' }}>Gender: </Text>
+            {item?.gender}
           </Text>
         </View>
 

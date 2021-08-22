@@ -6,7 +6,8 @@ import {
   Image,
   Animated,
 } from 'react-native';
-
+import Images from '@assets';
+import { isEmpty } from 'lodash';
 export const CustomImage = ({
   source,
   width,
@@ -14,7 +15,7 @@ export const CustomImage = ({
   resizeMode = 'contain',
   style,
 }) => {
-  const [download, setDownload] = React.useState(1);
+  const [download, setDownload] = React.useState(-1);
 
   const onLoadStart = () => {
     setDownload(0);
@@ -35,13 +36,14 @@ export const CustomImage = ({
         onProgress={onProgress}
         onLoadEnd={onLoadEnd}
         onError={onError}
-        source={source}
+        source={!isEmpty(source.uri) ? source : Images.account_placeholder}
+        defaultSource={Images.account_placeholder}
         resizeMode={resizeMode}
         style={[width && { width }, height && { height }, style]}
       />
       {download > 0 && (
         <View style={styles.imageOverlay}>
-          <ActivityIndicator animating color="black" size='large' />
+          <ActivityIndicator animating color="black" size="large" />
         </View>
       )}
     </View>

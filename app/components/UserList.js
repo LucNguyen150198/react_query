@@ -8,15 +8,22 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import { HeaderSearchBar, CustomImage, Add } from '@components';
+import { HeaderSearchBar, CustomImage, Add, CustomPicker } from '@components';
 import { user } from '@api';
 import Images from '@assets';
 import faker from 'faker';
 import { SharedElement } from 'react-native-shared-element';
+import { useQueryClient } from 'react-query';
 const AVATAR_SIZE = 50;
 const SPACING = 20;
+const STATUS = [
+  { label: 'Active', value: 'active' },
+  { label: 'Inactive', value: 'inactive' },
+];
 export const UserList = ({ navigation }) => {
+  const queryClient = useQueryClient();
   const [paramSearch, setParamSearch] = React.useState(null);
+  const [status, setStatus] = React.useState(null);
   let onEndReachedCalledDuringMomentum = true;
 
   const modalRef = React.useRef(null);
@@ -30,15 +37,15 @@ export const UserList = ({ navigation }) => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = user.useGetUsers();
+  } = user.useGetUsers(status);
 
-  // const {
-  //   data: search_peoples,
-  //   isLoading: isSearchLoading,
-  //   isError: isSearchError,
-  //   isFetching: isSearchFetching,
-  //   isSuccess: isSearchSuccess,
-  // } = people.useGetAllPeople(paramSearch);
+  const {
+    data: search_users,
+    isLoading: isSearchLoading,
+    isError: isSearchError,
+    isFetching: isSearchFetching,
+    isSuccess: isSearchSuccess,
+  } = user.useSearchUser(paramSearch);
 
   const onLoadMore = () => {
     if (hasNextPage && !onEndReachedCalledDuringMomentum) {
@@ -48,23 +55,20 @@ export const UserList = ({ navigation }) => {
   };
 
   const onSubmitSearch = (params) => {
-    setParamSearch(params);
+    setParamSearch({ name: params?.search });
   };
-
-  // const onChangePage = (page) => () => {
-  //   setPage(page);
-  //   fetchPeoples(page);
-  // };
 
   const onGoToDetail = (item) => () => {
     navigation.navigate('UserDetail', { item });
+    modalRef.current?.forceQuit();
   };
   const onGoToCreate = () => {
     navigation.navigate('UserForm');
   };
+
   renderItem = ({ item, index }) => {
     return item?.data?.map((user, index) => {
-      const { email, first_name, avatar, last_name, id } = user;
+      const { email, avatar, name, id, status } = user;
       const phone = faker.phone.phoneNumberFormat();
       return (
         <TouchableOpacity
@@ -81,10 +85,8 @@ export const UserList = ({ navigation }) => {
             />
           </SharedElement>
 
-          <View>
-            <Text style={styles.txtName}>
-              {first_name} {last_name}
-            </Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.txtName}>{name}</Text>
             <Text style={styles.txtBirthday}>
               <Text style={{ fontWeight: 'bold' }}>Email: </Text>
               {email}
@@ -93,6 +95,24 @@ export const UserList = ({ navigation }) => {
               <Text style={{ fontWeight: 'bold' }}>Phone: </Text>
               {phone}
             </Text>
+            <Text
+              style={[
+                styles.txtBirthday,
+                {
+                  fontWeight: 'bold',
+                  color: status === 'active' ? 'green' : 'red',
+                },
+              ]}
+            >
+              <Text
+                style={{
+                  color: 'black',
+                }}
+              >
+                Status:{' '}
+              </Text>
+              {status}
+            </Text>
           </View>
         </TouchableOpacity>
       );
@@ -100,36 +120,32 @@ export const UserList = ({ navigation }) => {
   };
 
   const renderSearchItem = ({ item, index }) => {
-    const { name, birth_year, gender, url } = item;
-    const id = url?.split('/').slice(-2)[0];
-    const avatar_url = `https://randomuser.me/api/portraits/${faker.helpers.randomize(
-      ['women', 'men']
-    )}/${faker.random.number(60)}.jpg`;
-
+    const { email, avatar, name, id, gender } = item;
+    const phone = faker.phone.phoneNumberFormat();
     return (
       <TouchableOpacity
         key={index + ''}
         style={styles.containerItem}
-        onPress={onGoToDetail({
-          id,
-          avatar_url,
-        })}
+        onPress={onGoToDetail({ ...item, phone })}
       >
-        <Image
-          style={styles.avatarStyle}
-          source={{
-            uri: avatar_url,
-          }}
-        />
-        <View>
+        <SharedElement id={`item.${id}.image`}>
+          <CustomImage
+            style={styles.avatarStyle}
+            source={{
+              uri: avatar,
+            }}
+          />
+        </SharedElement>
+
+        <View style={{ flex: 1 }}>
           <Text style={styles.txtName}>{name}</Text>
           <Text style={styles.txtBirthday}>
-            <Text style={{ fontWeight: 'bold' }}>BirthDay: </Text>
-            {birth_year}
+            <Text style={{ fontWeight: 'bold' }}>Email: </Text>
+            {email}
           </Text>
-          <Text style={styles.txtGender}>
-            <Text style={{ fontWeight: 'bold' }}>Gender: </Text>
-            {gender}
+          <Text style={styles.txtBirthday}>
+            <Text style={{ fontWeight: 'bold' }}>Phone: </Text>
+            {phone}
           </Text>
         </View>
       </TouchableOpacity>
@@ -140,7 +156,6 @@ export const UserList = ({ navigation }) => {
     return isFetchingNextPage && <ActivityIndicator animating size="small" />;
   };
 
-  if (isLoading) return <ActivityIndicator animating color="#a87332" />;
   if (isError) return <Text style={styles.txtLoading}>{error.message}</Text>;
   return (
     <View style={{ flex: 1 }}>
@@ -153,16 +168,23 @@ export const UserList = ({ navigation }) => {
         ref={modalRef}
         title="User"
         renderItem={renderSearchItem}
-        // onSubmit={onSubmitSearch}
-        data={[]}
-        // loading={isSearchFetching || isSearchLoading}
-        // success={isSearchSuccess}
+        onSubmit={onSubmitSearch}
+        data={search_users?.data ?? []}
+        loading={isSearchFetching || isSearchLoading}
+        success={isSearchSuccess}
       />
+      <CustomPicker
+        value={status}
+        items={STATUS}
+        placeholder="Select status"
+        onChangeValue={(value) => setStatus(value)}
+      />
+
       <FlatList
         contentContainerStyle={{
           padding: SPACING,
         }}
-        refreshing={isFetching}
+        refreshing={isFetching || isLoading}
         onRefresh={refetch}
         keyExtractor={(_, index) => index + ''}
         data={users?.pages ?? []}
@@ -192,7 +214,7 @@ const styles = StyleSheet.create({
   containerItem: {
     flex: 1,
     flexDirection: 'row',
-    padding: SPACING,
+    padding: SPACING - 10,
     marginBottom: SPACING,
     borderRadius: 12,
     alignItems: 'center',

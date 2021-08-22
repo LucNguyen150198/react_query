@@ -1,22 +1,26 @@
 import axiosClient from './axiosClient';
-import { useQuery, useInfiniteQuery } from 'react-query';
+import { useQuery, useInfiniteQuery, useQueryClient } from 'react-query';
 import Configs from '@config';
+
 const user = {
-  useGetUsers: () => {
+  useGetUsers: (status) => {
     return useInfiniteQuery(
-      'users',
+      ['users', status],
       ({ pageParam = 1 }) => {
         return axiosClient.get('users', {
           baseURL: Configs.BASE_URL_USER,
-          params: { page: pageParam, per_page: 8 },
+          params: { page: pageParam, status },
         });
       },
       {
         getNextPageParam: (lastPage) => {
-          if (lastPage?.page < lastPage?.total_pages) {
-            return +lastPage?.page + 1;
+          const page = lastPage?.meta?.pagination?.page;
+          const pages = lastPage?.meta?.pagination?.pages;
+          if (page < pages) {
+            return +page + 1;
           }
         },
+        keepPreviousData: true
       }
     );
   },
@@ -32,8 +36,20 @@ const user = {
     );
   },
 
-  addUser: (data) => {
-    axiosClient.post('users', data, {
+  useSearchUser: (params) => {
+    return useQuery(
+      ['users', params?.name],
+      () =>
+        axiosClient.get('users', {
+          params: params,
+          baseURL: Configs.BASE_URL_USER,
+        }),
+      { enabled: !!params?.name }
+    );
+  },
+
+  addUser: async (data) => {
+    return  axiosClient.post('users', data, {
       baseURL: Configs.BASE_URL_USER,
     });
   },

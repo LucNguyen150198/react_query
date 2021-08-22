@@ -8,48 +8,69 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  Switch,
 } from 'react-native';
-import { CustomInput } from '@components';
+import { CustomInput, CustomPicker } from '@components';
 import { user } from '@api';
 import Images from '@assets';
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
+
 import * as yup from 'yup';
 const { width } = Dimensions.get('window');
 const INITIAL_USER = {
   name: '',
-  job: '',
+  email: '',
+  gender: '',
+  status: true,
 };
+const GENDERS = [
+  { label: 'Male', value: 'male' },
+  { label: 'Female', value: 'female' },
+];
 export const UserForm = ({ route, navigation }) => {
   // const { item } = route.params;
   const queryClient = useQueryClient();
-  const { isLoading, isError, isFetching, error, mutate, data } = useMutation(
-    'user',
-    user.addUser,
-    {
-      onSuccess: (data, variables) => {
-        navigation.goBack();
-      },
-      onError: (err, newUser, context) => {
-        //queryClient.setQueryData('user', context.previousValue);
-      },
-      onSettled: (data) => {
-        queryClient.invalidateQueries('user');
-      },
-    }
-  );
+  const { isLoading, isFetching, mutate } = useMutation('user', user.addUser, {
+    onSuccess: async ({ data }, variables, context) => {
+      navigation.goBack();
+    },
+    onError: (err, newUser, context) => {
+      resetForm();
+      alert(err.message);
+    },
+    onSettled: (data) => {
+      queryClient.invalidateQueries('user');
+    },
+  });
 
   const schema = yup.object().shape({
     name: yup.string().required('The field not empty'),
-    job: yup.string().required('The field not empty'),
+    email: yup
+      .string()
+      .email('The email invalid')
+      .required('The field not empty'),
+    gender: yup.string().required('The field not empty'),
   });
 
-  const { handleChange, handleSubmit, values, errors, touched, handleBlur } =
-    useFormik({
-      initialValues: INITIAL_USER,
-      validationSchema: schema,
-      onSubmit: (value) => mutate(value),
-    });
+  const {
+    handleChange,
+    handleSubmit,
+    values,
+    errors,
+    touched,
+    handleBlur,
+    setFieldValue,
+    resetForm,
+  } = useFormik({
+    initialValues: INITIAL_USER,
+    validationSchema: schema,
+    onSubmit: (value) => {
+      const newValue = { ...value };
+      newValue.status = newValue.status ? 'active' : 'inactive';
+      mutate(newValue);
+    },
+  });
 
   const Button = ({ onPress, label, disabled = false, transparent, color }) => {
     return (
@@ -69,7 +90,6 @@ export const UserForm = ({ route, navigation }) => {
       </TouchableOpacity>
     );
   };
-
   return (
     <SafeAreaView style={styles.container}>
       <Image
@@ -88,14 +108,33 @@ export const UserForm = ({ route, navigation }) => {
         touched={touched.name}
       />
       <CustomInput
-        placeholder="Job"
-        icon="briefcase"
-        value={values.job}
-        onChangeText={handleChange('job')}
-        onBlur={handleBlur('job')}
-        error={errors.job}
-        touched={touched.job}
+        placeholder="Email"
+        icon="envelope-o"
+        value={values.email}
+        onChangeText={handleChange('email')}
+        onBlur={handleBlur('email')}
+        error={errors.email}
+        touched={touched.email}
       />
+      <CustomPicker
+        value={values.gender}
+        items={GENDERS}
+        placeholder="Select gender"
+        onChangeValue={handleChange('gender')}
+        error={errors.gender}
+        touched={touched.gender}
+      />
+
+      <View style={styles.switchStyle}>
+        <Text style={styles.txtStatus}>Status: </Text>
+        <Switch
+          value={values.status}
+          onValueChange={(value) => setFieldValue('status', value)}
+          style={{ transform: [{ scale: 0.8 }] }}
+          disabled={isLoading || isFetching}
+        />
+      </View>
+
       <Button
         label={'Submit'}
         onPress={handleSubmit}
@@ -131,6 +170,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
   },
+  txtStatus: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+
   buttonStyle: {
     width: width * 0.5,
     height: 40,
@@ -145,5 +189,12 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     height: 20,
     margin: 0,
+  },
+  switchStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    marginVertical: 10,
+    width: '85%',
   },
 });

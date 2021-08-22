@@ -8,3 +8,4 @@ export * from './CustomImage';
 export * from './CustomInput';
 export *  from './Icon';
 export *  from './UserForm';
+export * from './CustomPicker'

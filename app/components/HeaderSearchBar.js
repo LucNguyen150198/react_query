@@ -20,7 +20,8 @@ export const HeaderSearchBar = React.forwardRef(({
   onSubmit,
   loading,
   success,
-  onModalHide
+  onModalHide,
+  invalidQuery
 },ref) => {
   const [visible, setSearchBar] = React.useState(false);
   const [searchKey, setSearchKey] = React.useState(null);
