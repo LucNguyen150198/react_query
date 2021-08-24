@@ -8,6 +8,7 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnReconnect: 'always',
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      staleTime:10000
     },
   },
 });

@@ -14,9 +14,10 @@ import { CustomInput, CustomPicker, Back } from '@components';
 import { user } from '@api';
 import Images from '@assets';
 import { useFormik } from 'formik';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient, QueryCache } from 'react-query';
 
 import * as yup from 'yup';
+const queryCache = new QueryCache();
 const { width } = Dimensions.get('window');
 const INITIAL_USER = {
   name: '',
@@ -31,12 +32,20 @@ const GENDERS = [
 export const UserForm = ({ route, navigation }) => {
   // const { item } = route.params;
   const queryClient = useQueryClient();
-  const { isLoading, isFetching, mutate } = useMutation('user', user.addUser, {
+  const { isLoading, isFetching, mutate } = useMutation('users', user.addUser, {
+    onMutate: async () => {
+      await queryClient.cancelQueries('users');
+
+      const previousValue = queryClient.getQueryData(['users', 'active']);
+      const query = queryCache.find('users');
+      console.log('previousValue', previousValue);
+    },
+
     onSuccess: async ({ data }, variables, context) => {
+      resetForm();
       navigation.goBack();
     },
     onError: (err, newUser, context) => {
-      resetForm();
       alert(err.message);
     },
     onSettled: (data) => {
@@ -98,7 +107,7 @@ export const UserForm = ({ route, navigation }) => {
         blurRadius={10}
       />
 
-      <Back backgroundColor='#fff' onPress={() => navigation.goBack()} />
+      <Back backgroundColor="#fff" onPress={() => navigation.goBack()} />
 
       <Text style={styles.txtTitle}>CREATE USER</Text>
       <CustomInput

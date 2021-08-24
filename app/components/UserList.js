@@ -87,7 +87,11 @@ export const UserList = ({ navigation }) => {
 
           <View style={{ flex: 1 }}>
             <Text style={styles.txtName}>{name}</Text>
-            <Text style={styles.txtBirthday}>
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={styles.txtBirthday}
+            >
               <Text style={{ fontWeight: 'bold' }}>Email: </Text>
               {email}
             </Text>
@@ -139,7 +143,11 @@ export const UserList = ({ navigation }) => {
 
         <View style={{ flex: 1 }}>
           <Text style={styles.txtName}>{name}</Text>
-          <Text style={styles.txtBirthday}>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            style={styles.txtBirthday}
+          >
             <Text style={{ fontWeight: 'bold' }}>Email: </Text>
             {email}
           </Text>
