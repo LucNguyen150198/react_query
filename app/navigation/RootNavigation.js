@@ -1,7 +1,9 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import {enableScreens} from 'react-native-screens'
 import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 import TabNavigation from './TabNavigation';
+enableScreens()
 const Stack = createSharedElementStackNavigator();
 const RootNavigation = () => {
   return (

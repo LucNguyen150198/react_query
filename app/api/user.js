@@ -1,14 +1,19 @@
 import axiosClient from './axiosClient';
 import { useQuery, useInfiniteQuery, useQueryClient } from 'react-query';
 import Configs from '@config';
-
+const OPTIONS = {
+  baseURL: Configs.BASE_URL_USER,
+  headers: {
+    Authorization: Configs.TOKEN ? `Bearer ${Configs.TOKEN}` : '',
+  },
+};
 const user = {
   useGetUsers: (status) => {
     return useInfiniteQuery(
       ['users', status],
       ({ pageParam = 1 }) => {
         return axiosClient.get('users', {
-          baseURL: Configs.BASE_URL_USER,
+          ...OPTIONS,
           params: { page: pageParam, status },
         });
       },
@@ -20,7 +25,7 @@ const user = {
             return +page + 1;
           }
         },
-        keepPreviousData: true
+        keepPreviousData: true,
       }
     );
   },
@@ -30,7 +35,7 @@ const user = {
       ['users', id],
       () =>
         axiosClient.get(`users/${id}`, {
-          baseURL: Configs.BASE_URL_USER,
+          ...OPTIONS,
         }),
       { enabled: !!id }
     );
@@ -42,15 +47,15 @@ const user = {
       () =>
         axiosClient.get('users', {
           params: params,
-          baseURL: Configs.BASE_URL_USER,
+          ...OPTIONS,
         }),
       { enabled: !!params?.name }
     );
   },
 
   addUser: async (data) => {
-    return  axiosClient.post('users', data, {
-      baseURL: Configs.BASE_URL_USER,
+    return axiosClient.post('users', data, {
+      ...OPTIONS,
     });
   },
 };

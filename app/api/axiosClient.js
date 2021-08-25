@@ -8,7 +8,6 @@ const axiosClient = axios.create({
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
-    Authorization: Config.TOKEN ? `Bearer ${Config.TOKEN}` : '',
   },
 });
 axiosClient.interceptors.response.use(

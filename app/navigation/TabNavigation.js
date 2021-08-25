@@ -10,7 +10,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import UserStack from './User';
 import PeopleStack from './People';
-import { FilmList } from '@components';
+import TravelStack from './Travel';
 const IconTab = Animated.createAnimatedComponent(Icon);
 const Tab = createBottomTabNavigator();
 
@@ -20,8 +20,8 @@ const ICONS = [
     name: 'home',
   },
   {
-    key: 'cart',
-    name: 'shopping-cart',
+    key: 'travel',
+    name: 'map-marked',
   },
   {
     key: 'user',
@@ -67,7 +67,7 @@ function MyTabBar({ state, descriptors, navigation }) {
 
         const opacity = progress.interpolate({
           inputRange: [index - 1, index, index + 1],
-          outputRange: [0.9, 1, 0.9],
+          outputRange: [0.8, 1, 0.8],
           extrapolate: 'clamp',
         });
 
@@ -100,7 +100,7 @@ function MyTabBar({ state, descriptors, navigation }) {
 export default function TabNavigation() {
   return (
     <Tab.Navigator
-      initialRouteName="UserStack"
+      initialRouteName="TravelStack"
       screenOptions={{
         tabBarShowLabel: false,
         tabBarActiveTintColor: 'rgb(253,189,27)',
@@ -117,8 +117,8 @@ export default function TabNavigation() {
         }}
       />
       <Tab.Screen
-        name="FilmList"
-        component={FilmList}
+        name="TravelStack"
+        component={TravelStack}
         options={{
           headerShown: false,
         }}
