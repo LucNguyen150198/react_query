@@ -2,19 +2,23 @@ import React, { useRef } from 'react';
 import {
   View,
   Text,
-  FlatList,
+  Image,
   ActivityIndicator,
   StyleSheet,
   TouchableOpacity,
   Animated,
   SafeAreaView,
 } from 'react-native';
-import { HeaderSearchBar, CustomImage ,Add} from '@components';
+import { HeaderSearchBar, CustomImage, Add } from '@components';
 import { travel } from '@api';
 import { travelSpec } from '@themes';
 import { SharedElement } from 'react-navigation-shared-element';
 const { ITEM_WIDTH, ITEM_HEIGHT, RADIUS, SPACING, FULL_SIZE } = travelSpec;
 export const TravelList = ({ navigation }) => {
+  const [paramSearch, setParamSearch] = React.useState(null);
+  let onEndReachedCalledDuringMomentum = true;
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const modalRef = React.useRef(null);
   const {
     data: travels,
     isLoading,
@@ -27,8 +31,14 @@ export const TravelList = ({ navigation }) => {
     isFetchingNextPage,
   } = travel.useGetTravels();
 
-  let onEndReachedCalledDuringMomentum = true;
-  const scrollX = useRef(new Animated.Value(0)).current;
+  const {
+    data: search_travels,
+    isLoading: isSearchLoading,
+    isError: isSearchError,
+    isFetching: isSearchFetching,
+    isSuccess: isSearchSuccess,
+  } = travel.useSearchTravel(paramSearch);
+
   const onLoadMore = () => {
     if (hasNextPage && !onEndReachedCalledDuringMomentum) {
       onEndReachedCalledDuringMomentum = true;
@@ -37,7 +47,12 @@ export const TravelList = ({ navigation }) => {
   };
 
   const onGoToDetail = (item) => {
+    modalRef.current?.forceQuit();
     navigation.navigate('TravelDetail', { item });
+  };
+
+  const onSubmitSearch = (params) => {
+    setParamSearch({ query: params?.search });
   };
 
   renderItem = ({ item, index }) => {
@@ -91,11 +106,7 @@ export const TravelList = ({ navigation }) => {
               {photographer}
             </Animated.Text>
           </SharedElement>
-          <Add
-            size={26}
-            backgroundColor="#00b82e"
-            style={styles.icon}
-          />
+          <Add size={26} backgroundColor="#00b82e" style={styles.icon} />
           <View style={styles.days}>
             <Text adjustsFontSizeToFit style={styles.daysValue}>
               {randomNumberDays}
@@ -107,6 +118,43 @@ export const TravelList = ({ navigation }) => {
         </TouchableOpacity>
       );
     });
+  };
+
+  renderSearchItem = ({ item, index }) => {
+    const { src, photographer } = item;
+    const randomNumberDays = Math.floor(Math.random() * 100);
+    return (
+      <TouchableOpacity
+        key={index + ''}
+        onPress={() => onGoToDetail(item)}
+        style={styles.itemContainer}
+      >
+        <SharedElement
+          id={`item.${item.id}.photo`}
+          style={StyleSheet.absoluteFillObject}
+        >
+          <CustomImage
+            source={{ uri: src.large }}
+            style={[StyleSheet.absoluteFillObject]}
+            resizeMode="cover"
+          />
+        </SharedElement>
+        <SharedElement id={`item.${item.id}.photographer`}>
+          <Text adjustsFontSizeToFit style={[styles.name]}>
+            {photographer}
+          </Text>
+        </SharedElement>
+        <Add size={26} backgroundColor="#00b82e" style={styles.icon} />
+        <View style={styles.days}>
+          <Text adjustsFontSizeToFit style={styles.daysValue}>
+            {randomNumberDays}
+          </Text>
+          <Text adjustsFontSizeToFit style={styles.daysLabel}>
+            Days
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
   };
   const renderFooter = () => {
     return (
@@ -124,22 +172,25 @@ export const TravelList = ({ navigation }) => {
       </SafeAreaView>
     );
   return (
-    <SafeAreaView
+    <View
       style={{
         flex: 1,
         backgroundColor: '#FFF',
-        justifyContent: 'center',
-        alignItems: 'center',
       }}
     >
-      <Text adjustsFontSizeToFit style={styles.stripLabel}>
-        Trips
-      </Text>
-      <View
-        style={{
-          height: ITEM_HEIGHT + SPACING,
-        }}
-      >
+      <HeaderSearchBar
+        ref={modalRef}
+        renderItem={renderSearchItem}
+        onSubmit={onSubmitSearch}
+        data={search_travels?.photos ?? []}
+        loading={isSearchFetching || isSearchLoading}
+        success={isSearchSuccess}
+      />
+      <View style={{ marginTop: SPACING * 4 }}>
+        <Text adjustsFontSizeToFit style={styles.stripLabel}>
+          Trips
+        </Text>
+
         <Animated.FlatList
           onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { x: scrollX } } }],
@@ -164,7 +215,7 @@ export const TravelList = ({ navigation }) => {
           }}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -195,7 +246,7 @@ const styles = StyleSheet.create({
   days: {
     position: 'absolute',
     bottom: SPACING,
-    left: SPACING*2 + 52,
+    left: SPACING * 2 + 52,
     width: 52,
     height: 52,
     borderRadius: 26,
@@ -212,9 +263,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING + 5,
     alignSelf: 'flex-start',
   },
-  icon:{
+  icon: {
     position: 'absolute',
     bottom: SPACING,
     left: SPACING,
-  }
+  },
 });

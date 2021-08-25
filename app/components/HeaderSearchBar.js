@@ -13,104 +13,109 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { CustomModal } from './CustomModal';
 const ICON_SIZE = 30;
 const SPACING = 20;
-export const HeaderSearchBar = React.forwardRef(({
-  title='React Query',
-  data = [],
-  renderItem,
-  onSubmit,
-  loading,
-  success,
-  onModalHide,
-  invalidQuery
-},ref) => {
-  const [visible, setSearchBar] = React.useState(false);
-  const [searchKey, setSearchKey] = React.useState(null);
-  const [list, setList] = React.useState([]);
+export const HeaderSearchBar = React.forwardRef(
+  (
+    {
+      title,
+      data = [],
+      renderItem,
+      onSubmit,
+      loading,
+      success,
+      onModalHide,
+      invalidQuery,
+    },
+    ref
+  ) => {
+    const [visible, setSearchBar] = React.useState(false);
+    const [searchKey, setSearchKey] = React.useState(null);
+    const [list, setList] = React.useState([]);
 
-  React.useEffect(() => {
-    setList(data);
-  }, [data]);
+    React.useEffect(() => {
+      setList(data);
+    }, [data]);
 
-  React.useImperativeHandle(ref, () => ({
-    forceQuit: closeModalSearch,
-  }));
+    React.useImperativeHandle(ref, () => ({
+      forceQuit: closeModalSearch,
+    }));
 
-  const openModalSearch = () => {
-    setSearchBar(true);
-  };
-  const closeModalSearch = () => {
-    setSearchBar(false);
-    setSearchKey(null);
-    setList([]);
-  };
-  const onSubmitSearch = () => {
-    if (typeof onSubmit === 'function') {
-      onSubmit({ search: searchKey });
-    }
-  };
+    const openModalSearch = () => {
+      setSearchBar(true);
+    };
+    const closeModalSearch = () => {
+      setSearchBar(false);
+      setSearchKey(null);
+      setList([]);
+    };
+    const onSubmitSearch = () => {
+      if (typeof onSubmit === 'function') {
+        onSubmit({ search: searchKey });
+      }
+    };
 
-  const onChangeValue = (val) => setSearchKey(val);
-  const SearchBar = () => {
-    return (
-      <View style={{ flex: 1, backgroundColor: '#fff' }}>
-        <View style={styles.searchBarStyle}>
-          <Icon name="arrow-left" size={20} onPress={closeModalSearch} />
-          <View style={styles.searchStyle}>
-            <TextInput
-              style={styles.inputStyle}
-              value={searchKey}
-              onChangeText={onChangeValue}
-              autoFocus={true}
-              placeholder="Search..."
-              onSubmitEditing={onSubmitSearch}
+    const onChangeValue = (val) => setSearchKey(val);
+    const SearchBar = () => {
+      return (
+        <View style={{ flex: 1, backgroundColor: '#fff',alignItems:'center' }}>
+          <View style={styles.searchBarStyle}>
+            <Icon name="arrow-left" size={20} onPress={closeModalSearch} />
+            <View style={styles.searchStyle}>
+              <TextInput
+                style={styles.inputStyle}
+                value={searchKey}
+                onChangeText={onChangeValue}
+                autoFocus={true}
+                placeholder="Search..."
+                onSubmitEditing={onSubmitSearch}
+              />
+            </View>
+          </View>
+          {loading && (
+            <ActivityIndicator
+              animating
+              color="#a87332"
+              style={{ padding: SPACING }}
             />
+          )}
+          {success && (
+            <FlatList
+              style={{ flex: 1 }}
+              contentContainerStyle={{
+                padding: SPACING,
+              }}
+              keyExtractor={(_, index) => index + ''}
+              data={list}
+              renderItem={renderItem}
+              removeClippedSubviews={true}
+              initialNumToRender={20}
+              maxToRenderPerBatch={5}
+            />
+          )}
+        </View>
+      );
+    };
+    return (
+      <React.Fragment>
+        <View style={styles.container}>
+          {!!title && <Text style={styles.txtTitle}>{title}</Text>}
+          <View style={{ flex: 1, alignItems: 'flex-end' }}>
+            <TouchableOpacity onPress={openModalSearch}>
+              <View style={styles.iconStyle}>
+                <Icon name="search" size={15} color="#FFF" />
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
-        {loading && (
-          <ActivityIndicator
-            animating
-            color="#a87332"
-            style={{ padding: SPACING }}
-          />
-        )}
-        {success && (
-          <FlatList
-            style={{ flex: 1 }}
-            contentContainerStyle={{
-              padding: SPACING,
-            }}
-            keyExtractor={(_, index) => index + ''}
-            data={list}
-            renderItem={renderItem}
-            removeClippedSubviews={true}
-            initialNumToRender={20}
-            maxToRenderPerBatch={5}
-          />
-        )}
-      </View>
-    );
-  };
-  return (
-    <React.Fragment>
-      <View style={styles.container}>
-        <Text style={styles.txtTitle}>{title}</Text>
-        <View>
-          <TouchableOpacity onPress={openModalSearch}>
-            <View style={styles.iconStyle}>
-              <Icon name="search" size={15} />
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
 
-      {
-        <CustomModal visible={visible} onModalHide={onModalHide}>
-          <SearchBar />
-        </CustomModal>
-      }
-    </React.Fragment>
-  );
-})
+        {
+          <CustomModal visible={visible} onModalHide={onModalHide}>
+            <SearchBar />
+          </CustomModal>
+        }
+      </React.Fragment>
+    );
+  }
+);
 const styles = StyleSheet.create({
   container: {
     padding: 20,
@@ -119,8 +124,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderBottomWidth: 0.3,
-    borderBottomColor: '#465249',
+    // borderBottomWidth: 0.3,
+    // borderBottomColor: '#465249',
     backgroundColor: '#FFF',
   },
   txtTitle: {
@@ -132,7 +137,7 @@ const styles = StyleSheet.create({
     width: ICON_SIZE,
     height: ICON_SIZE,
     borderRadius: ICON_SIZE,
-    backgroundColor: '#e3e1e1',
+    backgroundColor: 'rgb(119,225,193)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -152,7 +157,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: SPACING / 2,
-    backgroundColor: '#e3e1e1',
   },
   inputStyle: {
     flex: 1,

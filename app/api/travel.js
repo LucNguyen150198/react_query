@@ -42,17 +42,17 @@ const travel = {
     );
   },
 
-  // useSearchUser: (params) => {
-  //   return useQuery(
-  //     ['users', params?.name],
-  //     () =>
-  //       axiosClient.get('users', {
-  //         params: params,
-  //         baseURL: Configs.BASE_URL_USER,
-  //       }),
-  //     { enabled: !!params?.name }
-  //   );
-  // },
+  useSearchTravel: (params) => {
+    return useQuery(
+      ['travels', params?.query],
+      () =>
+        axiosClient.get('search', {
+          params,
+          ...OPTIONS,
+        }),
+      { enabled: !!params?.query }
+    );
+  },
 
   // addUser: async (data) => {
   //   return axiosClient.post('users', data, {
