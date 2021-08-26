@@ -12,7 +12,7 @@ import { HeaderSearchBar, CustomImage, Add, CustomPicker } from '@components';
 import { user } from '@api';
 import Images from '@assets';
 import faker from 'faker';
-import { SharedElement } from 'react-native-shared-element';
+import { SharedElement } from 'react-navigation-shared-element';
 import { useQueryClient } from 'react-query';
 const AVATAR_SIZE = 50;
 const SPACING = 20;
@@ -68,13 +68,14 @@ export const UserList = ({ navigation }) => {
 
   renderItem = ({ item, index }) => {
     return item?.data?.map((user, index) => {
-      const { email, avatar, name, id, status } = user;
+      const { email, name, id, status } = user;
       const phone = faker.phone.phoneNumberFormat();
+      const avatar = 'https://random.responsiveimages.io/v1/docs';
       return (
         <TouchableOpacity
           key={index + ''}
           style={styles.containerItem}
-          onPress={onGoToDetail({ ...user, phone })}
+          onPress={onGoToDetail({ ...user, phone, avatar })}
         >
           <SharedElement id={`item.${id}.image`}>
             <CustomImage
@@ -86,19 +87,28 @@ export const UserList = ({ navigation }) => {
           </SharedElement>
 
           <View style={{ flex: 1 }}>
-            <Text style={styles.txtName}>{name}</Text>
-            <Text
-              numberOfLines={1}
-              adjustsFontSizeToFit
-              style={styles.txtBirthday}
-            >
-              <Text style={{ fontWeight: 'bold' }}>Email: </Text>
-              {email}
-            </Text>
-            <Text style={styles.txtBirthday}>
-              <Text style={{ fontWeight: 'bold' }}>Phone: </Text>
-              {phone}
-            </Text>
+            <SharedElement id={`item.${id}.name`}>
+              <Text style={styles.txtName}>{name}</Text>
+            </SharedElement>
+
+            <SharedElement id={`item.${id}.email`}>
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                style={styles.txtBirthday}
+              >
+                <Text style={{ fontWeight: 'bold' }}>Email: </Text>
+                {email}
+              </Text>
+            </SharedElement>
+
+            <SharedElement id={`item.${id}.phone`}>
+              <Text style={styles.txtBirthday}>
+                <Text style={{ fontWeight: 'bold' }}>Phone: </Text>
+                {phone}
+              </Text>
+            </SharedElement>
+
             <Text
               style={[
                 styles.txtBirthday,
@@ -241,6 +251,7 @@ const styles = StyleSheet.create({
     height: AVATAR_SIZE,
     borderRadius: AVATAR_SIZE,
     marginRight: SPACING,
+    resizeMode:'cover'
   },
   txtName: {
     fontSize: 18,

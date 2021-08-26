@@ -1,16 +1,8 @@
 import * as React from 'react';
-import {
-  StyleSheet,
-  Animated,
-  TouchableOpacity,
-  View,
-  Easing,
-} from 'react-native';
+import { StyleSheet, Animated, TouchableOpacity, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import UserStack from './User';
-import PeopleStack from './People';
-import TravelStack from './Travel';
+import { TravelList, UserList, PeopleList, PhotoGraphyList } from '@screens';
 const IconTab = Animated.createAnimatedComponent(Icon);
 const Tab = createBottomTabNavigator();
 
@@ -22,6 +14,10 @@ const ICONS = [
   {
     key: 'travel',
     name: 'map-marked',
+  },
+  {
+    key: 'photography',
+    name: 'camera',
   },
   {
     key: 'user',
@@ -100,7 +96,7 @@ function MyTabBar({ state, descriptors, navigation }) {
 export default function TabNavigation() {
   return (
     <Tab.Navigator
-      initialRouteName="TravelStack"
+      initialRouteName="PhotoGraphyTab"
       screenOptions={{
         tabBarShowLabel: false,
         tabBarActiveTintColor: 'rgb(253,189,27)',
@@ -110,22 +106,31 @@ export default function TabNavigation() {
       tabBar={(props) => <MyTabBar {...props} />}
     >
       <Tab.Screen
-        name="UserStack"
-        component={UserStack}
+        name="UserTab"
+        component={UserList}
         options={{
           headerShown: false,
         }}
       />
       <Tab.Screen
-        name="TravelStack"
-        component={TravelStack}
+        name="TravelTab"
+        component={TravelList}
         options={{
           headerShown: false,
         }}
       />
+
       <Tab.Screen
-        name="PeopleStack"
-        component={PeopleStack}
+        name="PhotoGraphyTab"
+        component={PhotoGraphyList}
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <Tab.Screen
+        name="PeopleTab"
+        component={PeopleList}
         options={{
           headerShown: false,
         }}

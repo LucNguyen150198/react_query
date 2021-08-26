@@ -187,9 +187,9 @@ export const TravelList = ({ navigation }) => {
         success={isSearchSuccess}
       />
       <View style={{ marginTop: SPACING * 4 }}>
-        <Text adjustsFontSizeToFit style={styles.stripLabel}>
+        {/* <Text adjustsFontSizeToFit style={styles.stripLabel}>
           Trips
-        </Text>
+        </Text> */}
 
         <Animated.FlatList
           onScroll={Animated.event(

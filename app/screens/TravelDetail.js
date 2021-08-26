@@ -37,7 +37,7 @@ const zoomOut = {
   },
 };
 export const TravelDetail = ({ route, navigation }) => {
-  const { item } = route.params;
+  const { item } = route?.params;
   const {
     data: photo = {},
     isLoading,
@@ -56,7 +56,7 @@ export const TravelDetail = ({ route, navigation }) => {
     }, 300);
   };
 
-  renderItem = ({ item, index }) => {
+  renderItem = ({ item:element, index }) => {
     return (
       <Animatable.View
         ref={handleTextRef}
@@ -80,14 +80,14 @@ export const TravelDetail = ({ route, navigation }) => {
         }}
       >
         <CustomImage
-          source={{ uri: photo?.src?.portrait }}
+          source={{ uri: item?.src?.portrait }}
           style={{
             width: '100%',
             height: '70%',
           }}
           resizeMode="cover"
         />
-        <Text adjustsFontSizeToFit>activity #{item + 1}</Text>
+        <Text adjustsFontSizeToFit>activity #{element + 1}</Text>
       </Animatable.View>
     );
   };

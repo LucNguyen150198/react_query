@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, ActivityIndicator, Image } from 'react-native';
 import { user } from '@api';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { CustomImage } from '@components';
-import { SharedElement } from 'react-native-shared-element';
+import { SharedElement } from 'react-navigation-shared-element';
 export const UserDetail = ({ route, navigation }) => {
   const { item } = route.params;
   const {
@@ -14,8 +14,8 @@ export const UserDetail = ({ route, navigation }) => {
     isSuccess,
     error,
   } = user.useGetUser(item.id);
-  if (isLoading || isFetching)
-    return <ActivityIndicator animating color="#a87332" />;
+  // if (isLoading || isFetching)
+  //   return <ActivityIndicator animating color="#a87332" />;
 
   if (isError) return <Text style={styles.txtLoading}>{error.message}</Text>;
 
@@ -27,7 +27,7 @@ export const UserDetail = ({ route, navigation }) => {
       >
         <CustomImage
           style={StyleSheet.absoluteFillObject}
-          source={{ uri: 'https://random.responsiveimages.io/v1/docs' }}
+          source={{ uri: item?.avatar }}
           resizeMode="cover"
         />
       </SharedElement>
@@ -49,44 +49,31 @@ export const UserDetail = ({ route, navigation }) => {
               uri: data?.avatar,
             }}
           />
-          <Text style={styles.txtName}>{data?.name}</Text>
+          <SharedElement id={`item.${item.id}.name`}>
+            <Text style={styles.txtName}>{item?.name}</Text>
+          </SharedElement>
         </View>
 
         <View style={{ padding: 10 }}>
-          <Text style={styles.txtGender}>
-            <Text style={{ fontWeight: 'bold' }}>Email: </Text>
-            {data?.email}
-          </Text>
-          <Text style={styles.txtBirthday}>
-            <Text style={{ fontWeight: 'bold' }}>Phone Number: </Text>
-            {item?.phone}
-          </Text>
+          <SharedElement id={`item.${item.id}.email`}>
+            <Text style={styles.txtGender}>
+              <Text style={{ fontWeight: 'bold' }}>Email: </Text>
+              {item?.email}
+            </Text>
+          </SharedElement>
+
+          <SharedElement id={`item.${item.id}.phone`}>
+            <Text style={styles.txtBirthday}>
+              <Text style={{ fontWeight: 'bold' }}>Phone Number: </Text>
+              {item?.phone}
+            </Text>
+          </SharedElement>
+
           <Text style={styles.txtBirthday}>
             <Text style={{ fontWeight: 'bold' }}>Gender: </Text>
             {item?.gender}
           </Text>
         </View>
-
-        {/* <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-evenly',
-            alignItems: 'center',
-          }}
-        >
-          <View style={{ alignItems: 'center' }}>
-            <Text style={styles.txtColorStyle}>Hair Color</Text>
-            <Text style={styles.txtBirthday}>{data?.hair_color}</Text>
-          </View>
-          <View style={{ alignItems: 'center' }}>
-            <Text style={styles.txtColorStyle}>Skin Color</Text>
-            <Text style={styles.txtBirthday}>{data?.skin_color}</Text>
-          </View>
-          <View style={{ alignItems: 'center' }}>
-            <Text style={styles.txtColorStyle}>Eye Color</Text>
-            <Text style={styles.txtBirthday}>{data?.eye_color}</Text>
-          </View>
-        </View> */}
       </View>
     </View>
   );
@@ -97,6 +84,15 @@ UserDetail.sharedElements = (route) => {
   return [
     {
       id: `item.${item.id}.image`,
+    },
+    {
+      id: `item.${item.id}.name`,
+    },
+    {
+      id: `item.${item.id}.phone`,
+    },
+    {
+      id: `item.${item.id}.email`,
     },
   ];
 };

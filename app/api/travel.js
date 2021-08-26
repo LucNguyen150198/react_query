@@ -50,7 +50,7 @@ const travel = {
           params,
           ...OPTIONS,
         }),
-      { enabled: !!params?.query }
+      { enabled: !!params?.query, keepPreviousData: true }
     );
   },
 
