@@ -32,3 +32,11 @@ export const cardSpec = {
   SPACING,
   FULL_SIZE: s_card + SPACING * 2,
 };
+
+export const logoSpec = {
+  LOGO_WIDTH: 220,
+  LOGO_HEIGHT: 40,
+  DOT_SIZE: 40,
+  TICKER_HEIGHT: 40,
+  CIRCLE_SIZE: width * 0.6,
+};

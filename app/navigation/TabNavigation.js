@@ -2,7 +2,12 @@ import * as React from 'react';
 import { StyleSheet, Animated, TouchableOpacity, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { TravelList, UserList, PeopleList, PhotoGraphyList } from '@screens';
+import {
+  TravelList,
+  UserList,
+  PhotoGraphyList,
+  HeadPhoneList,
+} from '@screens';
 const IconTab = Animated.createAnimatedComponent(Icon);
 const Tab = createBottomTabNavigator();
 
@@ -20,8 +25,8 @@ const ICONS = [
     name: 'camera',
   },
   {
-    key: 'user',
-    name: 'user-alt',
+    key: 'headphone',
+    name: 'headphones',
   },
 ];
 
@@ -129,8 +134,8 @@ export default function TabNavigation() {
       />
 
       <Tab.Screen
-        name="PeopleTab"
-        component={PeopleList}
+        name="HeadPhoneList"
+        component={HeadPhoneList}
         options={{
           headerShown: false,
         }}

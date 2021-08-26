@@ -1,1 +1,4 @@
-export * from './photographic'
+import headPhones from './headPhones';
+module.exports = {
+  headPhones,
+};
