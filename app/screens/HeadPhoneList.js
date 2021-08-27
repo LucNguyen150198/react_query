@@ -52,11 +52,11 @@ export const HeadPhoneList = ({ navigation }) => {
     });
     const translateXHeading = scrollX.interpolate({
       inputRange,
-      outputRange: [width * 0.2, 0, -width * 0.2],
+      outputRange: [width * 0.1, 0, -width * 0.1],
     });
     const translateXDescription = scrollX.interpolate({
       inputRange,
-      outputRange: [width * 0.6, 0, -width * 0.6],
+      outputRange: [width * 0.7, 0, -width * 0.7],
     });
     return (
       <View style={styles.item}>
@@ -93,8 +93,20 @@ export const HeadPhoneList = ({ navigation }) => {
   };
 
   const Pagination = () => {
+    const inputRange = [-width, 0, width];
+    const translateX = scrollX.interpolate({
+      inputRange,
+      outputRange: [-DOT_SIZE, 0, DOT_SIZE],
+    });
     return (
       <View style={styles.pagination}>
+        <Animated.View
+          style={[
+            styles.paginationDotIndicator,
+            { transform: [{ translateX }] },
+            StyleSheet.absoluteFillObject,
+          ]}
+        />
         {headPhones.map((item, index) => {
           const { color, key } = item;
           return (
@@ -203,7 +215,7 @@ const styles = StyleSheet.create({
     height: height * 0.85,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop:40
+    paddingTop: 40,
   },
   image: {
     width: width * 0.75,
@@ -269,7 +281,16 @@ const styles = StyleSheet.create({
     width: DOT_SIZE,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: DOT_SIZE / 2,
   },
+  paginationDotIndicator: {
+    width: DOT_SIZE,
+    height: DOT_SIZE,
+    borderRadius: DOT_SIZE / 2,
+    borderColor: '#ccc',
+    borderWidth: 2,
+  },
+
   paginationDot: {
     width: DOT_SIZE * 0.3,
     height: DOT_SIZE * 0.3,
