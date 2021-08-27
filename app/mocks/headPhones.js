@@ -4,6 +4,7 @@ import {
   urbanears_pink,
   urbanears_grey,
 } from '@assets';
+
 export default [
   {
     type: 'Humlan P',

@@ -8,4 +8,5 @@ module.exports = {
   urbanears_pink: require('./headPhone/urbanears_pink.png'),
   urbanears_grey: require('./headPhone/urbanears_grey.png'),
   ue_black_logo: require('./headPhone/ue_black_logo.png'),
+  marketingImage: 'https://picsum.photos/200/300',
 };

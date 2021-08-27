@@ -10,6 +10,7 @@ import {
   TravelDetail,
   PeopleDetail,
   PhotoGraphyDetail,
+  HeadPhoneDetail,
 } from '@screens';
 enableScreens();
 const Stack = createSharedElementStackNavigator();
@@ -59,6 +60,12 @@ const RootNavigation = () => {
         <Stack.Screen
           component={PhotoGraphyDetail}
           name={'PhotoGraphyDetail'}
+          options={options}
+        />
+
+        <Stack.Screen
+          component={HeadPhoneDetail}
+          name={'HeadPhoneDetail'}
           options={options}
         />
       </Stack.Navigator>

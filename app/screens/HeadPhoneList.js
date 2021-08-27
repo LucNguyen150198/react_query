@@ -3,11 +3,9 @@ import {
   View,
   Text,
   Image,
-  ActivityIndicator,
   StyleSheet,
   TouchableOpacity,
   Animated,
-  SafeAreaView,
   StatusBar,
 } from 'react-native';
 
@@ -23,8 +21,7 @@ export const HeadPhoneList = ({ navigation }) => {
   const modalRef = React.useRef(null);
 
   const onGoToDetail = (item) => {
-    modalRef.current?.forceQuit();
-    navigation.navigate('TravelDetail', { item });
+    navigation.navigate('HeadPhoneDetail', { item });
   };
 
   const renderItem = ({ item, index }) => {
@@ -59,16 +56,23 @@ export const HeadPhoneList = ({ navigation }) => {
       outputRange: [width * 0.7, 0, -width * 0.7],
     });
     return (
-      <View style={styles.item}>
-        <Animated.Image
-          source={imageUri}
-          style={[
-            styles.image,
-            {
-              transform: [{ scale }],
-            },
-          ]}
-        />
+      <TouchableOpacity
+        activeOpacity={0.9}
+        style={styles.item}
+        onPress={() => onGoToDetail(item)}
+      >
+        <SharedElement id={`item.${item.key}.image`} style={styles.image}>
+          <Animated.Image
+            source={imageUri}
+            style={[
+              styles.image,
+              {
+                transform: [{ scale }],
+              },
+            ]}
+          />
+        </SharedElement>
+
         <View style={styles.textContainer}>
           <Animated.Text
             style={[
@@ -88,7 +92,7 @@ export const HeadPhoneList = ({ navigation }) => {
             {description}
           </Animated.Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -163,17 +167,19 @@ export const HeadPhoneList = ({ navigation }) => {
             extrapolate: 'clamp',
           });
           return (
-            <Animated.View
-              key={item.key}
-              style={[
-                styles.circle,
-                {
-                  backgroundColor: item.color,
-                  opacity,
-                  transform: [{ scale }],
-                },
-              ]}
-            />
+            <SharedElement id={`item.${item.key}.circle`} style={styles.circle}>
+              <Animated.View
+                key={item.key}
+                style={[
+                  styles.circle,
+                  {
+                    backgroundColor: item.color,
+                    opacity,
+                    transform: [{ scale }],
+                  },
+                ]}
+              />
+            </SharedElement>
           );
         })}
       </View>
@@ -320,6 +326,6 @@ const styles = StyleSheet.create({
     height: CIRCLE_SIZE,
     borderRadius: CIRCLE_SIZE / 2,
     position: 'absolute',
-    top: '15%',
+    top: '11%',
   },
 });

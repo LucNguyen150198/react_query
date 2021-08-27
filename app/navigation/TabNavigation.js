@@ -2,12 +2,7 @@ import * as React from 'react';
 import { StyleSheet, Animated, TouchableOpacity, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {
-  TravelList,
-  UserList,
-  PhotoGraphyList,
-  HeadPhoneList,
-} from '@screens';
+import { TravelList, UserList, PhotoGraphyList, HeadPhoneList } from '@screens';
 const IconTab = Animated.createAnimatedComponent(Icon);
 const Tab = createBottomTabNavigator();
 
@@ -72,6 +67,18 @@ function MyTabBar({ state, descriptors, navigation }) {
           extrapolate: 'clamp',
         });
 
+        const opacityBehindIcon = progress.interpolate({
+          inputRange: [index - 1, index, index + 1],
+          outputRange: [0, 0.2, 0],
+          extrapolate: 'clamp',
+        });
+
+        const scaleBehindIcon = progress.interpolate({
+          inputRange: [index - 1, index, index + 1],
+          outputRange: [0, 1, 0],
+          extrapolate: 'clamp',
+        });
+
         return (
           <TouchableOpacity
             key={index + ''}
@@ -80,8 +87,21 @@ function MyTabBar({ state, descriptors, navigation }) {
             accessibilityLabel={options.tabBarAccessibilityLabel}
             testID={options.tabBarTestID}
             onPress={onPress}
-            style={{ flex: 1, alignItems: 'center' }}
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
+            <Animated.View
+              style={[
+                styles.indicator,
+                {
+                  opacity: opacityBehindIcon,
+                  transform: [{ scale: scaleBehindIcon }],
+                },
+              ]}
+            />
             <IconTab
               name={ICONS[index].name}
               size={22}
@@ -101,7 +121,7 @@ function MyTabBar({ state, descriptors, navigation }) {
 export default function TabNavigation() {
   return (
     <Tab.Navigator
-      initialRouteName="PhotoGraphyTab"
+      initialRouteName="HeadPhoneList"
       screenOptions={{
         tabBarShowLabel: false,
         tabBarActiveTintColor: 'rgb(253,189,27)',
@@ -163,8 +183,11 @@ const styles = StyleSheet.create({
     height: 70,
     width: '90%',
   },
-  icon: {
-    // position: 'absolute',
-    // top: '50%',
+  indicator: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgb(253,189,27)',
+    position: 'absolute',
   },
 });

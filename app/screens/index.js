@@ -8,5 +8,5 @@ export * from './TravelDetail';
 export * from './PeopleDetail';
 export * from './UserDetail';
 export * from './PhotoGraphyDetail';
-
+export * from './HeadPhoneDetail';
 export * from './UserForm';
