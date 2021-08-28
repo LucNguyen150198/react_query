@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet, Animated, TouchableOpacity, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { TravelList, UserList, PhotoGraphyList, HeadPhoneList } from '@screens';
+import { TravelList, PhotoGraphyList, HeadPhoneList,FoodList } from '@screens';
 const IconTab = Animated.createAnimatedComponent(Icon);
 const Tab = createBottomTabNavigator();
 
@@ -121,7 +121,7 @@ function MyTabBar({ state, descriptors, navigation }) {
 export default function TabNavigation() {
   return (
     <Tab.Navigator
-      initialRouteName="HeadPhoneList"
+      initialRouteName="FoodList"
       screenOptions={{
         tabBarShowLabel: false,
         tabBarActiveTintColor: 'rgb(253,189,27)',
@@ -131,8 +131,8 @@ export default function TabNavigation() {
       tabBar={(props) => <MyTabBar {...props} />}
     >
       <Tab.Screen
-        name="UserTab"
-        component={UserList}
+        name="FoodList"
+        component={FoodList}
         options={{
           headerShown: false,
         }}

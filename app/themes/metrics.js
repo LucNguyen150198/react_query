@@ -13,9 +13,12 @@ export const SHADOW = {
   shadowRadius: 20,
   backgroundColor: '#FFF',
 };
-const s = width * 0.68;
+const s = dimensions.width * 0.68;
 
-const s_card = width * 0.85;
+const s_card = dimensions.width * 0.85;
+
+const CELL_WIDTH =dimensions.width * 0.64;
+const CELL_HEIGHT = CELL_WIDTH * 1.4;
 
 export const travelSpec = {
   ITEM_WIDTH: s,
@@ -38,5 +41,11 @@ export const logoSpec = {
   LOGO_HEIGHT: 40,
   DOT_SIZE: 40,
   TICKER_HEIGHT: 40,
-  CIRCLE_SIZE: width * 0.6,
+  CIRCLE_SIZE: dimensions.width * 0.6,
+};
+
+export const foodSpec = {
+  CELL_WIDTH,
+  CELL_HEIGHT,
+  FULL_SIZE:CELL_WIDTH +SPACING *2
 };
